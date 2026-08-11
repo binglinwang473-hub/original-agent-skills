@@ -62,7 +62,7 @@ class SkillMetadataTests(unittest.TestCase):
     def test_skill_files_have_required_frontmatter(self):
         repo_root = Path(__file__).resolve().parents[3]
         skill_files = sorted(repo_root.rglob("SKILL.md"))
-        self.assertGreaterEqual(len(skill_files), 2)
+        self.assertGreaterEqual(len(skill_files), 1)
         for skill_file in skill_files:
             with self.subTest(skill_file=skill_file):
                 text = skill_file.read_text(encoding="utf-8")

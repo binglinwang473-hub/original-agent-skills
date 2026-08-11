@@ -1,7 +1,7 @@
 ---
 name: daoist-video-skill
 description: Use when the user wants to create, plan, review, or resume a Chinese short video about Daoist inspiration, Eastern philosophy, daily relationships, or emotional insight through a staged workflow with human approval checkpoints, scripts, storyboards, voice previews, asset tracking, QA, and publish-ready output.
-license: Proprietary — original user-authored workflow
+license: MIT
 ---
 
 # Daoist Video Skill
