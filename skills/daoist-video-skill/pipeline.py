@@ -6,6 +6,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -14,6 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 STATE_DIR = ROOT / "state"
 CONFIG_PATH = ROOT / "pipeline_config.json"
+VIDEO_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 
 
 def now() -> str:
@@ -24,8 +27,18 @@ def load_config() -> dict:
     return json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
 
 
+def validate_video_id(video_id: str) -> str:
+    """Allow only portable task IDs that cannot escape the state directory."""
+    if not isinstance(video_id, str) or not VIDEO_ID_PATTERN.fullmatch(video_id):
+        raise ValueError(
+            "video_id must start with a letter or digit and contain only "
+            "letters, digits, '.', '_' or '-' (max 128 characters)"
+        )
+    return video_id
+
+
 def state_path(video_id: str) -> Path:
-    return STATE_DIR / f"{video_id}.json"
+    return STATE_DIR / f"{validate_video_id(video_id)}.json"
 
 
 def load_state(video_id: str) -> dict:
@@ -125,12 +138,32 @@ def approve(video_id: str, checkpoint: str) -> None:
 
 
 def set_artifact(video_id: str, stage: str, artifact: str) -> None:
+    set_artifact_with_options(video_id, stage, artifact, allow_external=False)
+
+
+def set_artifact_with_options(
+    video_id: str,
+    stage: str,
+    artifact: str,
+    *,
+    allow_external: bool,
+) -> None:
     state = load_state(video_id)
     path = Path(artifact).expanduser()
     if not path.is_absolute():
         path = (Path.cwd() / path).resolve()
-    if not path.exists():
+    else:
+        path = path.resolve()
+    if not path.is_file():
         raise SystemExit(f"文件不存在：{path}")
+    if not allow_external:
+        try:
+            path.relative_to(ROOT)
+        except ValueError as exc:
+            raise ValueError(
+                "artifact must be inside the skill directory by default; "
+                "pass --allow-external-path only after checking the file"
+            ) from exc
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     rec = state["stages"].get(stage)
     if rec is None:
@@ -160,6 +193,8 @@ def set_artifact(video_id: str, stage: str, artifact: str) -> None:
 
 
 def set_remote_task(video_id: str, stage: str, task_id: str, cost: float = 0) -> None:
+    if not math.isfinite(cost) or cost < 0:
+        raise ValueError("cost must be a finite non-negative number")
     state = load_state(video_id)
     rec = state["stages"].get(stage)
     if rec is None:
@@ -205,6 +240,11 @@ def main() -> None:
     p.add_argument("stage")
     p.add_argument("artifact")
     p.add_argument("--video-id", default="2026-08-09-first-video")
+    p.add_argument(
+        "--allow-external-path",
+        action="store_true",
+        help="allow an artifact outside this skill directory after manual review",
+    )
 
     p = sub.add_parser("set-remote-task")
     p.add_argument("stage")
@@ -220,7 +260,12 @@ def main() -> None:
     elif args.command == "approve":
         approve(args.video_id, args.checkpoint)
     elif args.command == "set-artifact":
-        set_artifact(args.video_id, args.stage, args.artifact)
+        set_artifact_with_options(
+            args.video_id,
+            args.stage,
+            args.artifact,
+            allow_external=args.allow_external_path,
+        )
     elif args.command == "set-remote-task":
         set_remote_task(args.video_id, args.stage, args.task_id, args.cost)
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "FPV Video Prompt Director"
+  short_description: "Design route-aware FPV video prompts"
+  default_prompt: "Use $fpv-immersive-video-prompting to design a route-aware FPV video prompt."

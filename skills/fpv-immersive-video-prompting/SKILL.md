@@ -1,8 +1,6 @@
 ---
 name: fpv-immersive-video-prompting
 description: Use when the user wants to turn a static scene, character images, aerial map, drawn path, or route-control image into an immersive first-person FPV AI video prompt, especially Seedance/Kling/Runway/Veo style one-shot videos with numbered stop markers, red-line path control, world-map flythroughs, camera route planning, variable character counts, non-human POVs such as drones, pets, robot vacuums, character references, timed interactions, dialogue, spatial audio, and negative constraints.
-version: 1.0.0
-author: Hermes Agent
 license: MIT
 metadata:
   hermes:

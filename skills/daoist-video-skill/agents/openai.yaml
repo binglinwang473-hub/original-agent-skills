@@ -1,0 +1,4 @@
+interface:
+  display_name: "Daoist Video Workflow"
+  short_description: "Stage Chinese philosophy videos safely"
+  default_prompt: "Use $daoist-video-skill to plan a Chinese Daoist-inspired short video with review checkpoints."

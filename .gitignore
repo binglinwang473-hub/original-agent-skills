@@ -10,3 +10,8 @@
 **/*.mp3
 **/*.mp4
 skills/daoist-video-skill/state/*.json
+.env
+.env.*
+!.env.example
+**/*.key
+**/*.pem
