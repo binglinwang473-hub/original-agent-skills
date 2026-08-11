@@ -1,0 +1,23 @@
+{
+  "project_name": "一念之间",
+  "aspect_ratio": "16:9",
+  "width": 1920,
+  "height": 1080,
+  "target_duration_seconds": [25, 40],
+  "shot_count": 5,
+  "human_checkpoints": ["plan", "storyboard", "voice_preview", "voice"],
+  "stages": [
+    "brief",
+    "plan_review",
+    "script",
+    "storyboard",
+    "storyboard_review",
+    "voice_preview",
+    "voice_review",
+    "voice_lock",
+    "assets",
+    "render",
+    "qa",
+    "publish_ready"
+  ]
+}

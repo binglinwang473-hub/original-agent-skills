@@ -1,0 +1,12 @@
+.DS_Store
+.vscode/
+.idea/
+*.swp
+**/__pycache__/
+**/*.pyc
+**/.venv/
+**/.venv-*/
+**/*.wav
+**/*.mp3
+**/*.mp4
+skills/daoist-video-skill/state/*.json
