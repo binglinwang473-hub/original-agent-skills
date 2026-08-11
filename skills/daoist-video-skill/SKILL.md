@@ -1,9 +1,7 @@
 ---
 name: daoist-video-skill
 description: Use when the user wants to create, plan, review, or resume a Chinese short video about Daoist inspiration, Eastern philosophy, daily relationships, or emotional insight through a staged workflow with human approval checkpoints, scripts, storyboards, voice previews, asset tracking, QA, and publish-ready output.
-version: 1.0.0
-author: binglinwang473-hub
-license: Proprietary — original user-authored workflow
+license: MIT
 ---
 
 # Daoist Video Skill
@@ -47,7 +45,16 @@ python3 pipeline.py approve voice --video-id 2026-08-09-first-video
 python3 pipeline.py set-remote-task assets provider-task-123 --cost 0
 ```
 
-Use `status` before changing a task. Do not bypass a checkpoint by editing the JSON manually. If a stage is not ready, explain which artifact or approval is missing.
+Use `status` before changing a task. Do not bypass a checkpoint by editing the JSON manually. If a stage is not ready, explain which artifact or approval is missing. Task IDs are deliberately restricted to safe filename characters so state cannot escape the `state/` directory.
+
+Artifacts must live inside the skill directory by default. For a reviewed external file, use `--allow-external-path` explicitly and do not commit the resulting state file if it contains a local path:
+
+```bash
+python3 pipeline.py set-artifact voice_preview /path/to/preview.wav \
+  --allow-external-path
+```
+
+The optional VoxCPM helpers invoke a locally installed executable or load a third-party model. Review the environment, package version, model source, and output path before running them.
 
 ## Output contract
 
@@ -73,4 +80,3 @@ The pipeline stores one JSON record per video under `state/`. Each stage tracks 
 4. Preserve completed work and do not resubmit completed paid tasks.
 
 When committing a task state to a shared repository, remove local absolute paths, private source-media locations, credentials, and transient audio before publishing.
-
