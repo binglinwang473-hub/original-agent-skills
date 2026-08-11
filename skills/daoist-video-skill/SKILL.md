@@ -30,6 +30,13 @@ Default creative direction:
 
 Every paid or remote task requires a budget check and explicit human approval before submission. Record remote task IDs and estimated cost with `set-remote-task` so an interrupted task can resume without losing context.
 
+## Resource routing
+
+- Read `pipeline_config.json` before changing output dimensions, duration, shot count, checkpoints, or stage order.
+- Read `account_bible.md` before writing scripts, image prompts, voice direction, or visual constraints for the account.
+- Use the dated files under `content/` as examples and starting material; do not assume their claims or wording should be copied into a new task.
+- Use `tools/voxcpm_*.py` only when the user explicitly requests local VoxCPM work and the executable, model, input text, and output path have been reviewed.
+
 ## Command workflow
 
 Run commands from the skill directory:

@@ -1,26 +1,64 @@
-# 我的原创 Agent Skills
+# Original Agent Skills
 
-这里集中保存原创的 Agent Skill 与可恢复内容生产工作流。
+A small, inspectable repository for original Agent Skills and resumable creative workflows.
 
-项目目前处于早期公开阶段，由创建者维护。仓库不声称拥有下载量或广泛采用数据；重点是把 Agent 指令、文件操作边界、人工确认和可恢复状态整理成可以检查、测试和继续维护的公开材料。
+本仓库目前只发布一个原创 Skill：`skills/daoist-video-skill/`。项目处于早期公开阶段，不声称拥有下载量或广泛采用数据；重点是提供可阅读、可测试、可恢复的 Agent 工作流，并明确文件、网络、凭证和人工确认边界。
 
-## 包含内容
+## What it does
 
-### Daoist Video Skill
+Daoist Video Skill turns a Chinese short-video idea about Daoist inspiration, Eastern philosophy, relationships, or emotions into a staged production task:
 
-路径：`skills/daoist-video-skill/`
+- brief and script development
+- storyboard and voice-preview checkpoints
+- asset, render, QA, and publish-ready tracking
+- resumable JSON state with attempts, artifacts, remote task IDs, and cost points
+- human approval before paid or remote work
 
-面向中文东方哲思短视频的可恢复生产流水线。它把一条视频拆成选题简报、脚本、分镜、声音预览、素材、合成、质检和发布准备等阶段，在计划、分镜和声音节点暂停等待人工确认，并用状态文件记录产物、重试次数、远程任务和费用。
+The repository intentionally does not publish to social platforms automatically. External TTS, image, video, and FFmpeg tools are optional integrations and remain subject to human review.
 
-## 原创范围
+## Install for Codex
 
-`daoist-video-skill/` 保留原创方法论、代码、示例内容和 Skill 指令；本仓库不包含本机虚拟环境、缓存音频或带本机绝对路径的状态文件。
+From a local clone, copy the skill directory into the Codex skills directory:
 
-## 开发检查
+```bash
+mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
+cp -R skills/daoist-video-skill "${CODEX_HOME:-$HOME/.codex}/skills/"
+```
+
+Then invoke it in Codex with `$daoist-video-skill`. The skill's `SKILL.md` is the agent-facing contract; the bundled Python CLI is an optional local workflow helper.
+
+## Run the local workflow
+
+```bash
+cd skills/daoist-video-skill
+python3 pipeline.py init demo-video
+python3 pipeline.py status demo-video
+python3 pipeline.py set-artifact brief \
+  content/2026-08-09-first-video/brief.md \
+  --video-id demo-video
+python3 pipeline.py approve plan --video-id demo-video
+python3 pipeline.py status demo-video
+```
+
+State files are written under `skills/daoist-video-skill/state/` and are ignored by Git. Do not commit state that contains local absolute paths, private media locations, credentials, or transient audio.
+
+## Safety boundaries
+
+- Task IDs are restricted to safe filename characters.
+- Artifacts must stay inside the skill directory unless `--allow-external-path` is explicitly provided.
+- Paid or remote tasks require a budget check and human approval.
+- VoxCPM helpers invoke a local executable or load a third-party model; review the environment, package, model source, and output path first.
+- Markdown instructions, model output, and third-party contributions are untrusted input.
+
+## Development checks
 
 ```bash
 python3 -m unittest discover -s skills/daoist-video-skill/tests -v
 python3 -m py_compile skills/daoist-video-skill/pipeline.py
 ```
 
-提交 Skill 或脚本前，请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [SECURITY.md](SECURITY.md)。
+Before opening a change, read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Release history is recorded in [CHANGELOG.md](CHANGELOG.md).
+
+## License and scope
+
+The repository and the included Daoist Video Skill are released under the MIT License. This repository currently contains only the original Daoist skill; it does not claim ownership of unrelated material.
